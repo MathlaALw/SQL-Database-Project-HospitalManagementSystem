@@ -53,6 +53,7 @@
 
 ---
 
+
 **Doctor Table:**
 
 |DoctorID |DoctorName |Specialization ||PhoneNumber         |Email            |Address          |
@@ -61,9 +62,12 @@
 |2        |Dr. Fatima |Neurology      |99887767             |fatima@gmail.com |Muscat           |
 |3        |Dr. Ali    |Pediatrics     |99887768, 99889988   |ali@gmail.com    |Salalah          |
 
+
 **1st Normal Form (1NF):**
 
+
 **Doctor Table:**
+
 
 |DoctorID |DoctorName |Specialization |Email            |Address          |
 |---------|-----------|---------------|-----------------|-----------------|
@@ -95,9 +99,9 @@
 
 |MR_ID |PatientID |DoctorID |AppointmentID |Diagnosis       |TreatmentPlans       |Date      |Time     |Cost |
 |-------|----------|---------|---------------|-----------------|----------------------|----------|---------|-----|
-|1      |1         |1        |1              |Flu              |Rest, Hydration       |2023-10-01|10:30 AM |50   |
-|2      |2         |2        |2              |Migraine          |Medication, Rest      |2023-10-02|11:30 AM |75   |
-|3      |3         |3        |3              |Fever             |Medication, Rest      |2023-10-03|12:30 PM |60   |
+|1      |1         |1        |1              |Flu              |Hydration       |2023-10-01|10:30 AM |50   |
+|2      |2         |2        |2              |Migraine          |Medication   |2023-10-02|11:30 AM |75   |
+|3      |3         |3        |3              |Fever             |Medication  |2023-10-03|12:30 PM |60   |
 
 ---
 
@@ -180,4 +184,7 @@
 ------
 
 
+## SQL Script 
+
+```sql
 
