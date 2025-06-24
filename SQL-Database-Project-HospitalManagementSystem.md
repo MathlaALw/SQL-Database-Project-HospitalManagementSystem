@@ -56,7 +56,7 @@
 
 **Doctor Table:**
 
-|DoctorID |DoctorName |Specialization ||PhoneNumber         |Email            |Address          |
+|DoctorID |DoctorName |Specialization |PhoneNumber         |Email            |Address          |
 |---------|-----------|---------------|---------------------|-----------------|---------------- |
 |1        |Dr. Ahmed  |Cardiology     |99887766 , 98989898  |ahmed@gmail.com  |Muscat           |
 |2        |Dr. Fatima |Neurology      |99887767             |fatima@gmail.com |Muscat           |
