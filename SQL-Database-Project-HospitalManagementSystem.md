@@ -6,9 +6,9 @@
 
 ## ERD 
 
-![ERD](./images/HospitalManagementSystem1.png)
+![ERD](./images/ErdHospitalManagementSystem.png)
 
 ## Mapping 
 
-![Mapping](./images/MappingHospitalManagementSystem.png)
+![Mapping](./images/Mapping-HospitalManagementSystem.png)
 
