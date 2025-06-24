@@ -652,3 +652,156 @@ INSERT INTO Users (Username, Password) VALUES
 SELECT * FROM Users
 ```
 
+## Queries (DQL)
+ 1. List all patients who visited a certain doctor.
+```sql
+
+SELECT p.Patient_Name, d.Doctor_Name
+FROM Patient p
+INNER JOIN DoctorPatient dp ON p.Patient_ID = dp.Patient_ID
+INNER JOIN Doctor d ON dp.Doctor_ID = d.Doctor_ID
+WHERE d.Doctor_Name = 'Dr. Salim Al Harthy';
+```
+
+2. Count of appointments per department.
+
+```sql
+SELECT d.Department_Name, COUNT(a.Appointment_ID) AS Appointment_Count
+FROM Appointment a
+INNER JOIN Doctor d ON a.Doctor_ID = d.Doctor_ID
+GROUP BY d.Department_Name;
+```
+3. Retrieve doctors who have more than 5 appointments in a month.
+```sql
+
+SELECT Doctor_Name,MONTH(a.Appointment_Date) AS Month,COUNT(*) AS Appointment_Count
+FROM Appointment a
+INNER JOIN Doctor d ON a.Doctor_ID = d.Doctor_ID
+GROUP BY  d.Doctor_Name, MONTH(a.Appointment_Date)
+HAVING COUNT(*) > 1;
+
+```
+
+4. Use JOINs across 3–4 tables.
+
+```sql
+SELECT p.Patient_Name, d.Doctor_Name, a.Appointment_Date, a.Appointment_Time, m.Diagnosis
+FROM Patient p
+INNER JOIN Appointment a ON p.Patient_ID = a.Patient_ID
+INNER JOIN Doctor d ON a.Doctor_ID = d.Doctor_ID
+INNER JOIN MedicalRecord m ON a.Appointment_ID = m.Appointment_ID
+WHERE p.Patient_Name = 'Ali Said';
+```
+
+5. Use GROUP BY, HAVING, and aggregate functions.
+```sql
+SELECT d.Specialization, COUNT(*) AS Total_Doctors
+FROM Doctor d
+GROUP BY d.Specialization
+HAVING COUNT(*) > 1;
+
+```
+6. Use SUBQUERIES and EXISTS.
+
+```sql
+
+-- SUBQUERY to find patients with appointments in 2025-06-16
+SELECT p.Patient_Name
+FROM Patient p
+WHERE p.Patient_ID IN (SELECT a.Patient_ID FROM Appointment a
+WHERE a.Appointment_Date ='2025-06-16');
+
+-- EXISTS to check if a patient has any appointments
+SELECT p.Patient_Name
+FROM Patient p
+WHERE EXISTS ( SELECT * FROM Appointment a WHERE a.Patient_ID = p.Patient_ID);
+
+
+
+```
+
+## Functions & Stored Procedures
+
+1. Scalar function to calculate patient age from DOB.
+```sql
+CREATE FUNCTION dbo.CalculateAge(@DOB DATE)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @Age INT;
+    SET @Age = DATEDIFF(YEAR, @DOB, GETDATE());
+    RETURN @Age;
+END;
+
+-- calling the function
+SELECT dbo.CalculateAge('1990-01-01') AS Age;
+```
+
+2. Stored procedure to admit a patient (insert to Admissions, update Room availability).
+
+```sql
+CREATE PROCEDURE AdmitPatient
+    @Patient_ID INT,
+    @Room_Number INT,
+    @Date_In DATE,
+    @Date_Out DATE,
+    @Staff_ID INT
+    AS
+    BEGIN
+        -- Insert into Admission table
+        INSERT INTO Admission (Date_In, Date_Out, Room_Number, Patient_ID, Staff_ID)
+        VALUES (@Date_In, @Date_Out, @Room_Number, @Patient_ID, @Staff_ID);
+        
+        -- Update Room availability
+        UPDATE Rooms
+        SET Availability = 'False'
+        WHERE Room_Number = @Room_Number;
+    END;
+    -- calling the procedure
+    EXEC AdmitPatient @Patient_ID = 1, @Room_Number = 1, @Date_In = '2025-06-01', @Date_Out = '2025-06-05', @Staff_ID = 1;
+```
+
+
+3. Procedure to generate invoice (insert into Billing based on treatments).
+
+```sql
+CREATE PROCEDURE GenerateInvoice
+    @Patient_ID INT,
+    @Total_Cost DECIMAL(10, 2),
+    @PaymentStatus VARCHAR(50)
+    AS
+    BEGIN
+    -- Insert into Bill table
+        INSERT INTO Bill (Patient_ID, Total_Cost, P_Date, PaymentStatus)
+        VALUES (@Patient_ID, @Total_Cost, GETDATE(), @PaymentStatus);
+    END;
+    
+    
+    -- calling the procedure
+    EXEC GenerateInvoice @Patient_ID = 1, @Total_Cost = 200.00, @PaymentStatus = 'Paid';
+```
+
+4. Procedure to assign doctor to department and shift.
+
+```sql
+CREATE PROCEDURE AssignDoctorToDepartment
+    @Doctor_ID INT,
+    @Department_ID INT,
+    @Shift VARCHAR(50),
+    @Shift_Date DATE
+    AS
+    BEGIN
+        -- Update Doctor table with Department and Shift
+        UPDATE Doctor
+        SET Department_ID = @Department_ID
+        WHERE Doctor_ID = @Doctor_ID;
+        -- Update Staff table with Shift and Shift_Date
+        UPDATE Staff
+        SET Shift = @Shift, Shift_Date = @Shift_Date
+        WHERE Staff_ID = (SELECT Staff_ID FROM Doctor WHERE Doctor_ID = @Doctor_ID);
+    END;
+    
+    -- calling the procedure
+    EXEC AssignDoctorToDepartment @Doctor_ID = 1, @Department_ID = 1, @Shift = 'Morning', @Shift_Date = '2025-06-26';
+
+```
