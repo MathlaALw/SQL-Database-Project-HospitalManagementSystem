@@ -151,6 +151,19 @@ CREATE TABLE Users (
     Password VARCHAR(100) NOT NULL
 );
 
+-- Add Staff_ID as FK in Users Table
+ALTER TABLE Users
+ADD Staff_ID INT NULL FOREIGN KEY (Staff_ID) REFERENCES Staff(Staff_ID) ON DELETE CASCADE ON UPDATE CASCADE
+
+-- Add value for it --
+UPDATE Users
+SET Staff_ID = 4
+WHERE User_ID = 8;
+
+
+SELECT * FROM Users
+SELECT * FROM Staff
+
 -- Rooms
 CREATE TABLE Rooms (
     Room_Number INT PRIMARY KEY IDENTITY(1,1),
