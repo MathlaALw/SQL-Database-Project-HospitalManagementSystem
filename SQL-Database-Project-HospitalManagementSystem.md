@@ -993,7 +993,10 @@ PRINT 'Transaction failed, rolled back.';
 END CATCH;
 
 ```
-![Rollback Transaction](./images/Rollback.png)
+
+![Rollback Transaction](./images/Rollback1.png)
+
+
 
 --------------------------
 
