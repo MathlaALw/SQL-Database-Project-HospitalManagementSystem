@@ -339,6 +339,7 @@ CREATE TABLE DoctorPatient (
 
 
 ```
+---------------------------------------
 
 
 ## Adding Data into Tables 
@@ -651,6 +652,7 @@ INSERT INTO Users (Username, Password) VALUES
 
 SELECT * FROM Users
 ```
+------------------------------------------------
 
 ## Queries (DQL)
  1. List all patients who visited a certain doctor.
@@ -719,6 +721,7 @@ WHERE EXISTS ( SELECT * FROM Appointment a WHERE a.Patient_ID = p.Patient_ID);
 
 
 ```
+----------------------------------
 
 ## Functions & Stored Procedures
 
@@ -805,6 +808,7 @@ CREATE PROCEDURE AssignDoctorToDepartment
     EXEC AssignDoctorToDepartment @Doctor_ID = 1, @Department_ID = 1, @Shift = 'Morning', @Shift_Date = '2025-06-26';
 
 ```
+----------------------------------------------
 
 ## Triggers
 
@@ -883,3 +887,64 @@ WHERE Room_Number = 3; -- Show 'Room is already occupied by another patient.'
 
 
 ```
+-------------------------
+
+## Security (DCL)
+
+1. Create at least two user roles: DoctorUser, AdminUser.
+
+```sql
+CREATE ROLE DoctorUser;
+CREATE ROLE AdminUser;
+```
+
+![User Roles](./images/UserRoles.png)
+
+2. GRANT SELECT for DoctorUser on Patients and Appointments only.
+
+
+```sql
+GRANT SELECT ON Patient TO DoctorUser;
+GRANT SELECT ON Appointment TO DoctorUser;
+```
+![DoctorUser Select ON Patient](./images/DoctorUser-Patient.png)
+
+![DoctorUser Select ON Appointment](./images/DoctorUser-Appointment.png)
+
+3. GRANT INSERT, UPDATE for AdminUser on all tables.
+```sql
+GRANT INSERT, UPDATE ON Patient TO AdminUser;
+GRANT INSERT, UPDATE ON Appointment TO AdminUser;
+GRANT INSERT, UPDATE ON Doctor TO AdminUser;
+GRANT INSERT, UPDATE ON MedicalRecord TO AdminUser;
+GRANT INSERT, UPDATE ON Bill TO AdminUser;
+GRANT INSERT, UPDATE ON Department TO AdminUser;
+GRANT INSERT, UPDATE ON Staff TO AdminUser;
+GRANT INSERT, UPDATE ON Rooms TO AdminUser;
+GRANT INSERT, UPDATE ON Admission TO AdminUser;
+GRANT INSERT, UPDATE ON Users TO AdminUser;
+GRANT INSERT, UPDATE ON DoctorPatient TO AdminUser;
+```
+![AdminUser Insert Update ON all tables](./images/AdminUser-AllTable.png)
+
+4. REVOKE DELETE for Doctors.
+
+```sql
+-- Grant permission
+GRANT DELETE ON Patient TO DoctorUser;
+
+-- Revoke permission
+REVOKE DELETE ON Patient FROM DoctorUser;
+
+
+```
+![GRANT-TO-REVOKE](./images/GRANT-TO-REVOKE.png)
+
+
+![DoctorUser Revoke Delete ON Patient](./images/DoctorUser-Revoke.png)
+
+
+---------------------------------
+
+
+
