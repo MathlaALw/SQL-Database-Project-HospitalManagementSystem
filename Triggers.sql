@@ -8,17 +8,9 @@ ON Appointment
 AFTER INSERT
 AS
 BEGIN
-    INSERT INTO MedicalRecord (Patient_ID, Doctor_ID, Appointment_ID, Diagnosis, TreatmentPlans, Date, Time, Cost)
-    SELECT 
-        a.Patient_ID,
-        a.Doctor_ID,
-        a.Appointment_ID,
-        'Initial Checkup',
-        NULL,
-        GETDATE(), 
-        GETDATE(), 
-        0.00 
-    FROM inserted a;
+INSERT INTO MedicalRecord (Patient_ID, Doctor_ID, Appointment_ID, Diagnosis, TreatmentPlans, Date, Time, Cost)
+SELECT a.Patient_ID,a.Doctor_ID,a.Appointment_ID,'Initial Checkup',NULL,GETDATE(),GETDATE(),0.00 
+FROM inserted a;
 END;
 
 
@@ -35,14 +27,14 @@ ON Patient
 INSTEAD OF DELETE
 AS
 BEGIN
-    IF EXISTS (SELECT * FROM Bill WHERE Patient_ID IN (SELECT Patient_ID FROM deleted) AND PaymentStatus = 'Unpaid')
-    BEGIN
-        RAISERROR('Cannot delete patient with pending bills.', 16, 1);
-    END
-    ELSE
-    BEGIN
-        DELETE FROM Patient WHERE Patient_ID IN (SELECT Patient_ID FROM deleted);
-    END
+IF EXISTS (SELECT * FROM Bill WHERE Patient_ID IN (SELECT Patient_ID FROM deleted) AND PaymentStatus = 'Unpaid')
+BEGIN
+RAISERROR('Cannot delete patient with pending bills.', 16, 1);
+END
+ELSE
+BEGIN
+DELETE FROM Patient WHERE Patient_ID IN (SELECT Patient_ID FROM deleted);
+END
 END;
 
 -- calling the trigger
@@ -61,11 +53,11 @@ ON Rooms
 AFTER UPDATE
 AS
 BEGIN
-    IF EXISTS (SELECT * FROM Admission WHERE Room_Number IN (SELECT Room_Number FROM inserted) AND Date_Out IS NULL)
-    BEGIN
-        RAISERROR('Room is already occupied by another patient.', 16, 1);
-        --ROLLBACK TRANSACTION; -- 
-    END
+IF EXISTS (SELECT * FROM Admission WHERE Room_Number IN (SELECT Room_Number FROM inserted) AND Date_Out IS NULL)
+BEGIN
+RAISERROR('Room is already occupied by another patient.', 16, 1);
+ROLLBACK TRANSACTION; 
+END
 END;
 
 -- calling the trigger

@@ -6,11 +6,11 @@
 
 ## ERD 
 
-![ERD](./images/ErdHospitalManagementSystem.png)
+![ERD](./images/HospitalManagementSystem-1.png)
 
 ## Mapping 
 
-![Mapping](./images/Mapping-HospitalManagementSystem.png)
+![Mapping](./images/MappingHospitalManagementSystem-1.png)
 
 
 ## Normalization
@@ -731,9 +731,9 @@ CREATE FUNCTION dbo.CalculateAge(@DOB DATE)
 RETURNS INT
 AS
 BEGIN
-    DECLARE @Age INT;
-    SET @Age = DATEDIFF(YEAR, @DOB, GETDATE());
-    RETURN @Age;
+DECLARE @Age INT;
+SET @Age = DATEDIFF(YEAR, @DOB, GETDATE());
+RETURN @Age;
 END;
 
 -- calling the function
@@ -744,24 +744,23 @@ SELECT dbo.CalculateAge('1990-01-01') AS Age;
 
 ```sql
 CREATE PROCEDURE AdmitPatient
-    @Patient_ID INT,
-    @Room_Number INT,
-    @Date_In DATE,
-    @Date_Out DATE,
-    @Staff_ID INT
-    AS
-    BEGIN
-        -- Insert into Admission table
-        INSERT INTO Admission (Date_In, Date_Out, Room_Number, Patient_ID, Staff_ID)
-        VALUES (@Date_In, @Date_Out, @Room_Number, @Patient_ID, @Staff_ID);
+@Patient_ID INT,@Room_Number INT,
+@Date_In DATE,@Date_Out DATE,@Staff_ID INT
+AS
+BEGIN
+
+-- Insert into Admission table
+INSERT INTO Admission (Date_In, Date_Out, Room_Number, Patient_ID, Staff_ID)
+VALUES (@Date_In, @Date_Out, @Room_Number, @Patient_ID, @Staff_ID);
         
-        -- Update Room availability
-        UPDATE Rooms
-        SET Availability = 'False'
-        WHERE Room_Number = @Room_Number;
-    END;
-    -- calling the procedure
-    EXEC AdmitPatient @Patient_ID = 1, @Room_Number = 1, @Date_In = '2025-06-01', @Date_Out = '2025-06-05', @Staff_ID = 1;
+-- Update Room availability
+UPDATE Rooms
+SET Availability = 'False'
+WHERE Room_Number = @Room_Number;
+END;
+-- calling the procedure
+EXEC AdmitPatient @Patient_ID = 1, @Room_Number = 1, @Date_In = '2025-06-01', @Date_Out = '2025-06-05', @Staff_ID = 1;
+
 ```
 
 
@@ -769,43 +768,46 @@ CREATE PROCEDURE AdmitPatient
 
 ```sql
 CREATE PROCEDURE GenerateInvoice
-    @Patient_ID INT,
-    @Total_Cost DECIMAL(10, 2),
-    @PaymentStatus VARCHAR(50)
-    AS
-    BEGIN
-    -- Insert into Bill table
-        INSERT INTO Bill (Patient_ID, Total_Cost, P_Date, PaymentStatus)
-        VALUES (@Patient_ID, @Total_Cost, GETDATE(), @PaymentStatus);
-    END;
+@Patient_ID INT,
+@Total_Cost DECIMAL(10, 2),
+@PaymentStatus VARCHAR(50)
+AS
+BEGIN
+
+-- Insert into Bill table
+INSERT INTO Bill (Patient_ID, Total_Cost, P_Date, PaymentStatus)
+VALUES (@Patient_ID, @Total_Cost, GETDATE(), @PaymentStatus);
+END;
     
     
-    -- calling the procedure
-    EXEC GenerateInvoice @Patient_ID = 1, @Total_Cost = 200.00, @PaymentStatus = 'Paid';
+-- calling the procedure
+EXEC GenerateInvoice @Patient_ID = 1, @Total_Cost = 200.00, @PaymentStatus = 'Paid';
 ```
 
 4. Procedure to assign doctor to department and shift.
 
 ```sql
 CREATE PROCEDURE AssignDoctorToDepartment
-    @Doctor_ID INT,
-    @Department_ID INT,
-    @Shift VARCHAR(50),
-    @Shift_Date DATE
-    AS
-    BEGIN
-        -- Update Doctor table with Department and Shift
-        UPDATE Doctor
-        SET Department_ID = @Department_ID
-        WHERE Doctor_ID = @Doctor_ID;
-        -- Update Staff table with Shift and Shift_Date
-        UPDATE Staff
-        SET Shift = @Shift, Shift_Date = @Shift_Date
-        WHERE Staff_ID = (SELECT Staff_ID FROM Doctor WHERE Doctor_ID = @Doctor_ID);
-    END;
-    
-    -- calling the procedure
-    EXEC AssignDoctorToDepartment @Doctor_ID = 1, @Department_ID = 1, @Shift = 'Morning', @Shift_Date = '2025-06-26';
+@Doctor_ID INT,
+@Department_ID INT,
+@Shift VARCHAR(50),
+@Shift_Date DATE
+AS
+BEGIN
+
+-- Update Doctor table with Department and Shift
+UPDATE Doctor
+SET Department_ID = @Department_ID
+WHERE Doctor_ID = @Doctor_ID;
+
+-- Update Staff table with Shift and Shift_Date
+UPDATE Staff
+SET Shift = @Shift, Shift_Date = @Shift_Date
+WHERE Staff_ID = (SELECT Staff_ID FROM Doctor WHERE Doctor_ID = @Doctor_ID);
+END;
+
+-- calling the procedure
+EXEC AssignDoctorToDepartment @Doctor_ID = 1, @Department_ID = 1, @Shift = 'Morning', @Shift_Date = '2025-06-26';
 
 ```
 ----------------------------------------------
@@ -820,17 +822,9 @@ ON Appointment
 AFTER INSERT
 AS
 BEGIN
-    INSERT INTO MedicalRecord (Patient_ID, Doctor_ID, Appointment_ID, Diagnosis, TreatmentPlans, Date, Time, Cost)
-    SELECT 
-        a.Patient_ID,
-        a.Doctor_ID,
-        a.Appointment_ID,
-        'Initial Checkup',
-        NULL,
-        GETDATE(), 
-        GETDATE(), 
-        0.00 
-    FROM inserted a;
+INSERT INTO MedicalRecord (Patient_ID, Doctor_ID, Appointment_ID, Diagnosis, TreatmentPlans, Date, Time, Cost)
+SELECT a.Patient_ID,a.Doctor_ID,a.Appointment_ID,'Initial Checkup',NULL,GETDATE(), GETDATE(), 0.00 
+FROM inserted a;
 END;
 
 
@@ -848,14 +842,14 @@ ON Patient
 INSTEAD OF DELETE
 AS
 BEGIN
-    IF EXISTS (SELECT * FROM Bill WHERE Patient_ID IN (SELECT Patient_ID FROM deleted) AND PaymentStatus = 'Unpaid')
-    BEGIN
-        RAISERROR('Cannot delete patient with pending bills.', 16, 1);
-    END
-    ELSE
-    BEGIN
-        DELETE FROM Patient WHERE Patient_ID IN (SELECT Patient_ID FROM deleted);
-    END
+IF EXISTS (SELECT * FROM Bill WHERE Patient_ID IN (SELECT Patient_ID FROM deleted) AND PaymentStatus = 'Unpaid')
+BEGIN
+RAISERROR('Cannot delete patient with pending bills.', 16, 1);
+END
+ELSE
+BEGIN
+DELETE FROM Patient WHERE Patient_ID IN (SELECT Patient_ID FROM deleted);
+END
 END;
 
 -- calling the trigger
@@ -872,11 +866,11 @@ ON Rooms
 AFTER UPDATE
 AS
 BEGIN
-    IF EXISTS (SELECT * FROM Admission WHERE Room_Number IN (SELECT Room_Number FROM inserted) AND Date_Out IS NULL)
-    BEGIN
-        RAISERROR('Room is already occupied by another patient.', 16, 1);
-        --ROLLBACK TRANSACTION; -- 
-    END
+IF EXISTS (SELECT * FROM Admission WHERE Room_Number IN (SELECT Room_Number FROM inserted) AND Date_Out IS NULL)
+BEGIN
+RAISERROR('Room is already occupied by another patient.', 16, 1);
+--ROLLBACK TRANSACTION; 
+END
 END;
 
 -- calling the trigger
@@ -978,24 +972,24 @@ COMMIT TRANSACTION;
 ```sql
 
 BEGIN TRY
-    BEGIN TRANSACTION;
+BEGIN TRANSACTION;
 
-    INSERT INTO Admission (Date_In, Date_Out, Room_Number, Patient_ID, Staff_ID)
-    VALUES ('2025-06-21', '2025-06-25', 3, 3, 3);
+INSERT INTO Admission (Date_In, Date_Out, Room_Number, Patient_ID, Staff_ID)
+VALUES ('2025-06-21', '2025-06-25', 3, 3, 3);
 
-    UPDATE Rooms
-    SET Availability = 'False'
-    WHERE Room_Number = 3;
+UPDATE Rooms
+SET Availability = 'False'
+WHERE Room_Number = 3;
 
-    INSERT INTO Bill (Patient_ID, Total_Cost, P_Date, PaymentStatus)
-    VALUES (3, 200.00, GETDATE(), 'Unpaid');
+INSERT INTO Bill (Patient_ID, Total_Cost, P_Date, PaymentStatus)
+VALUES (3, 200.00, GETDATE(), 'Unpaid');
 
-    COMMIT TRANSACTION;
-    PRINT 'Transaction succeeded, committed.';
+COMMIT TRANSACTION;
+PRINT 'Transaction succeeded, committed.';
 END TRY
 BEGIN CATCH
-    ROLLBACK TRANSACTION;
-    PRINT 'Transaction failed, rolled back.';
+ROLLBACK TRANSACTION;
+PRINT 'Transaction failed, rolled back.';
 END CATCH;
 
 ```
@@ -1055,4 +1049,5 @@ SELECT * FROM vw_DepartmentStats;
 ```
 
 ![Department Stats View](./images/DepartmentStats.png)
+
 

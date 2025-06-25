@@ -15,12 +15,12 @@ CREATE TABLE Patient (
 	Email VARCHAR(100) NOT NULL UNIQUE
 );
 
-ALTER TABLE Patient
-ADD DOB DATE NOT NULL 
 
 ---------------------
 ---------------------
 -- Error in adding new columns with not null 
+ALTER TABLE Patient
+ADD DOB DATE NOT NULL 
 
 -- Solve--
 -- Step 1: Add the column allowing NULLs
