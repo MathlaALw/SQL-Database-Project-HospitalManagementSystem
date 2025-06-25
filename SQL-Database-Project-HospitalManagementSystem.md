@@ -1054,3 +1054,82 @@ SELECT * FROM vw_DepartmentStats;
 ![Department Stats View](./images/DepartmentStats.png)
 
 
+-------------------------------------
+
+## SQL Server Agent Jobs
+
+1.  Daily Backup Job 
+- Job Name: Daily_HospitalDB_Backup 
+- Schedule: Every day at 2:00 AM 
+- Action: Database backup 
+
+**Step-by-Step SSMS GUI Guide**
+
+1. Open SQL Server Agent → Right‑click Jobs → New Job…
+
+In Object Explorer, expand your server, expand SQL Server Agent, right-click Jobs, and select New Job….
+
+![New Job](./images/NewJob.png)
+
+![New Job Window](./images/NewJobWindow.png)
+
+2.In General, set the Job Name and Owner
+
+Name: Daily_HospitalManagmentDB_Backup
+
+Owner: Pick a login ( service account)
+
+Description: “Performs daily backup of HospitalManagmentDB at 2 AM”
+
+![General](./images/General1.png)
+
+
+3. Go to Steps → New…
+
+Click New to add a step. You'll see the New Job Step dialog.
+
+Step Name: “Backup Step”
+
+Type: Transact-SQL script (T-SQL)
+
+Database: master (or the target DB if needed)
+
+Command:
+
+```sql
+Copy
+Edit
+BACKUP DATABASE HospitalManagmentDB
+  TO DISK = 'C:\SQLBackups\HospitalManagmentDB.bak'
+  WITH FORMAT, INIT, NAME = 'HospitalManagmentDB-Full Backup';
+
+```
+Optionally set retry attempts (e.g. 1) and retry interval (e.g. 5 minutes).
+
+
+![Steps](./images/Steps1.png)
+
+![Steps Command](./images/Steps2.png)
+
+4. Go to Schedules → New…
+
+Click New to define a schedule. In the dialog:
+
+Name: Daily_2AM
+
+Schedule Type: Recurring
+
+Frequency: Daily; occurs every 1 day
+
+Daily Frequency: Occurs once at 2:00:00 AM
+
+Start date: Pick today’s date (it defaults to now); no end date unless desired.
+
+![Schedules](./images/Schedules.png)
+
+
+5. OK to close schedule and job dialogs
+Click OK in the New Job dialog to save everything.
+
+![Job Created](./images/JobCreated.png)
+
