@@ -10,7 +10,7 @@
 
 ## Mapping 
 
-![Mapping](./images/MappingHospitalManagementSystem-1.png)
+![Mapping](./images/MappingHospitalManagementSystem.png)
 
 
 ## Normalization
