@@ -861,6 +861,8 @@ VALUES (1, 1, '2025-06-21', '10:00');
 
 ```
 
+![Trigger After Insert Appointment](./images/T-1.png)
+
 2. Before delete on Patients → prevent deletion if pending bills exist.
 
 ```sql
@@ -883,6 +885,8 @@ END;
 
 DELETE FROM Patient WHERE Patient_ID = 3; -- Show 'Cannot delete patient with pending bills.'
 ```
+
+![Trigger Before Delete Patient](./images/T-2.png)
 
 3. After update on Rooms → ensure no two patients occupy same room.
 
@@ -908,6 +912,10 @@ WHERE Room_Number = 3; -- Show 'Room is already occupied by another patient.'
 
 
 ```
+
+![Trigger After Update Room](./images/T-3.png)
+
+
 -------------------------
 
 ## Security (DCL)

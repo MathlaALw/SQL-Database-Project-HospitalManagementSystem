@@ -16,7 +16,7 @@ END;
 
 -- calling the trigger
 INSERT INTO Appointment (Patient_ID, Doctor_ID, Appointment_Date, Appointment_Time)
-VALUES (1, 1, '2025-06-21', '10:00');
+VALUES (2, 2, '2025-06-27', '11:00');
 
 SELECT * FROM Appointment
 
