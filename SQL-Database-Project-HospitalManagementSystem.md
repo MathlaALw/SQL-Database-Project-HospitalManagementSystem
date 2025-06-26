@@ -668,10 +668,11 @@ WHERE d.Doctor_Name = 'Dr. Salim Al Harthy';
 2. Count of appointments per department.
 
 ```sql
-SELECT d.Department_Name, COUNT(a.Appointment_ID) AS Appointment_Count
+SELECT de.Department_Name, COUNT(a.Appointment_ID) AS Appointment_Count
 FROM Appointment a
 INNER JOIN Doctor d ON a.Doctor_ID = d.Doctor_ID
-GROUP BY d.Department_Name;
+INNER JOIN Department de ON  d.Department_ID = de.Department_ID
+GROUP BY de.Department_Name;
 ```
 3. Retrieve doctors who have more than 5 appointments in a month.
 ```sql
