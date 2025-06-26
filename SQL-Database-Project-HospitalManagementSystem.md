@@ -1058,10 +1058,14 @@ SELECT * FROM vw_DepartmentStats;
 
 ## SQL Server Agent Jobs
 
-1.  Daily Backup Job 
-- Job Name: Daily_HospitalDB_Backup 
-- Schedule: Every day at 2:00 AM 
-- Action: Database backup 
+**Option1.  Daily Backup Job**
+
+**- Job Name: Daily_HospitalDB_Backup**
+
+**- Schedule: Every day at 2:00 AM**
+
+**- Action: Database backup**
+
 
 **Step-by-Step SSMS GUI Guide**
 
@@ -1132,4 +1136,178 @@ Start date: Pick today’s date (it defaults to now); no end date unless desired
 Click OK in the New Job dialog to save everything.
 
 ![Job Created](./images/JobCreated.png)
+
+
+6. Test the Job Step Manually
+```sql
+BACKUP DATABASE HospitalManagmentDB
+TO DISK = 'C:\SQLBackups\HospitalManagmentDB.bak'
+WITH FORMAT, INIT, NAME = 'HospitalManagmentDB-Full Backup';
+```
+
+![Job Step Test](./images/TestJob1.png)
+
+
+**Option 2. Doctor Schedule Report**
+
+**-Job Name: Doctor_Daily_Schedule_Report**
+
+**-Schedule: Every morning at 7:00 AM**
+
+**Action: A stored procedure that extracts the daily doctor schedule from Appointments and inserts it into areport table DoctorDailyScheduleLog.**
+
+
+**Step-by-Step SSMS GUI Guide**
+
+1. Open SSMS → Expand SQL Server Agent → Right-click Jobs → Choose New Job…
+
+
+![New Job](./images/NewJob2.png)
+
+2. General Tab
+
+Name: Doctor_Daily_Schedule_Report
+
+Owner: (keep as default)
+
+Description: “Generates daily report of doctor appointments and logs them to DoctorDailyScheduleLog.”
+
+
+![General](./images/General2.png)
+
+
+3. Steps Tab → New…
+
+In the New Job Step window:
+
+Step Name: Execute usp_GenerateDoctorScheduleLog
+
+Type: Transact-SQL script (T-SQL)
+
+Run as: SQL Agent Service Account (default)
+
+Database: HospitalManagmentDB
+
+Command:
+
+```sql
+
+EXEC usp_GenerateDoctorScheduleLog;
+
+```
+Click OK to save the step.
+
+
+![Steps](./images/Steps5.png)
+
+![Steps Create](./images/Steps4.png)
+
+4. Go to the Schedules page → Click New…
+In the New Schedule window:
+
+Name: Daily_7AM_Schedule
+
+Schedule type: Recurring
+
+Frequency:
+
+Occurs: Daily
+
+Recurs every: 1 day
+
+Daily Frequency:
+
+Occurs once at: 7:00:00 AM
+
+Start Date: Today (or your preferred start date)
+
+Click OK to save the schedule.
+
+![Schedules](./images/Schedules2.png)
+
+![Schedules Create](./images/Schedules3.png)
+
+
+
+5. Ensure Job is Enabled → Click OK to Save the Job
+
+You’ll return to the main New Job window. Confirm that:
+
+- The job is enabled (default)
+- Steps and schedules are properly set
+
+Click OK to finish creating the job.
+
+![Job Created](./images/JobCreated2.png)
+
+
+6. Test the Job Step Manually
+
+```sql
+EXEC usp_GenerateDoctorScheduleLog;
+
+
+
+-- Error: If the stored procedure does not exist, create it first.
+
+
+
+USE HospitalManagmentDB;
+
+
+-- Create the DoctorDailyScheduleLog table
+
+CREATE TABLE dbo.DoctorDailyScheduleLog (
+    Log_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Doctor_ID INT NOT NULL,
+    Appointment_ID INT NOT NULL,
+    Appointment_Date DATE NOT NULL,
+    Appointment_Time TIME NOT NULL,
+    LoggedAt DATETIME DEFAULT GETDATE()
+);
+
+
+-- After creating the table, create the stored procedure 
+
+ALTER PROCEDURE dbo.usp_GenerateDoctorScheduleLog
+AS
+BEGIN
+INSERT INTO dbo.DoctorDailyScheduleLog (Doctor_ID, Appointment_ID, Appointment_Date, Appointment_Time)
+SELECT Doctor_ID,Appointment_ID,Appointment_Date,Appointment_Time
+FROM dbo.Appointment
+WHERE CAST(Appointment_Date AS DATE) = CAST(GETDATE() AS DATE);
+END;
+
+-- Test the procedure manually 
+
+EXEC dbo.usp_GenerateDoctorScheduleLog;
+
+
+-- Check if we have procedure with 'usp_GenerateDoctorScheduleLog' name 
+
+SELECT name, SCHEMA_NAME(schema_id) AS schema_name, create_date
+FROM sys.procedures
+WHERE name = 'usp_GenerateDoctorScheduleLog';
+
+
+SELECT * 
+FROM sys.tables 
+WHERE name = 'DoctorDailyScheduleLog';
+
+-- To view the DoctorDailyScheduleLog table
+SELECT * FROM DoctorDailyScheduleLog;
+
+
+
+
+```
+
+![Job Step Test](./images/TestJob2.png)
+
+
+
+
+
+
+
 

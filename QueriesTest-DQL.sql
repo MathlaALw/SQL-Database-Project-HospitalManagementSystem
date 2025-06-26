@@ -1,4 +1,7 @@
--- Queries to Test (DQL)-- List all patients who visited a certain doctor.
+-- Queries to Test (DQL)
+
+
+-- List all patients who visited a certain doctor.
 
 SELECT p.Patient_Name, d.Doctor_Name
 FROM Patient p
@@ -53,7 +56,9 @@ HAVING COUNT(*) > 1;
 
 SELECT * FROM Doctor
 
--- Use SUBQUERIES and EXISTS.
+-- Use SUBQUERIES and EXISTS.
+
+
 -- SUBQUERY to find patients with appointments in specific date
 SELECT p.Patient_Name
 FROM Patient p
