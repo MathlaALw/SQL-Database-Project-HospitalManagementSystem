@@ -757,6 +757,8 @@ END;
 SELECT dbo.CalculateAge('1990-01-01') AS Age;
 ```
 
+![Scalar Function](./images/F-1.png)
+
 2. Stored procedure to admit a patient (insert to Admissions, update Room availability).
 
 ```sql
@@ -780,6 +782,7 @@ EXEC AdmitPatient @Patient_ID = 1, @Room_Number = 1, @Date_In = '2025-06-01', @D
 
 ```
 
+![Stored Procedure AdmitPatient](./images/S-2.png)
 
 3. Procedure to generate invoice (insert into Billing based on treatments).
 
@@ -800,6 +803,9 @@ END;
 -- calling the procedure
 EXEC GenerateInvoice @Patient_ID = 1, @Total_Cost = 200.00, @PaymentStatus = 'Paid';
 ```
+
+![Stored Procedure GenerateInvoice](./images/S-3.png)
+
 
 4. Procedure to assign doctor to department and shift.
 
@@ -827,6 +833,10 @@ END;
 EXEC AssignDoctorToDepartment @Doctor_ID = 1, @Department_ID = 1, @Shift = 'Morning', @Shift_Date = '2025-06-26';
 
 ```
+
+![Stored Procedure AssignDoctorToDepartment](./images/S-4.png)
+
+
 ----------------------------------------------
 
 ## Triggers
