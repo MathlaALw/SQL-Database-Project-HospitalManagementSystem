@@ -665,6 +665,8 @@ INNER JOIN Doctor d ON dp.Doctor_ID = d.Doctor_ID
 WHERE d.Doctor_Name = 'Dr. Salim Al Harthy';
 ```
 
+![DQL-1](./images/DQL-1.png)
+
 2. Count of appointments per department.
 
 ```sql
@@ -674,6 +676,9 @@ INNER JOIN Doctor d ON a.Doctor_ID = d.Doctor_ID
 INNER JOIN Department de ON  d.Department_ID = de.Department_ID
 GROUP BY de.Department_Name;
 ```
+
+![DQL-2](./images/DQL-2.png)
+
 3. Retrieve doctors who have more than 5 appointments in a month.
 ```sql
 
@@ -684,6 +689,8 @@ GROUP BY  d.Doctor_Name, MONTH(a.Appointment_Date)
 HAVING COUNT(*) > 1;
 
 ```
+
+![DQL-3](./images/DQL-3.png)
 
 4. Use JOINs across 3–4 tables.
 
@@ -696,6 +703,8 @@ INNER JOIN MedicalRecord m ON a.Appointment_ID = m.Appointment_ID
 WHERE p.Patient_Name = 'Ali Said';
 ```
 
+![DQL-4](./images/DQL-4.png)
+
 5. Use GROUP BY, HAVING, and aggregate functions.
 ```sql
 SELECT d.Specialization, COUNT(*) AS Total_Doctors
@@ -704,6 +713,9 @@ GROUP BY d.Specialization
 HAVING COUNT(*) > 1;
 
 ```
+
+![DQL-5](./images/DQL-5.png)
+
 6. Use SUBQUERIES and EXISTS.
 
 ```sql
@@ -722,6 +734,10 @@ WHERE EXISTS ( SELECT * FROM Appointment a WHERE a.Patient_ID = p.Patient_ID);
 
 
 ```
+
+![Subquery-Exists](./images/Subquery-Exists.png)
+
+
 ----------------------------------
 
 ## Functions & Stored Procedures

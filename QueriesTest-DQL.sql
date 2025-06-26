@@ -39,11 +39,12 @@ FROM Patient p
 INNER JOIN Appointment a ON p.Patient_ID = a.Patient_ID
 INNER JOIN Doctor d ON a.Doctor_ID = d.Doctor_ID
 INNER JOIN MedicalRecord m ON a.Appointment_ID = m.Appointment_ID
-WHERE p.Patient_Name = 'Ali Said';
+WHERE p.Patient_Name = 'Fatma Al Balushi';
 
 SELECT * FROM Appointment
 SELECT * FROM Doctor
 SELECT * FROM MedicalRecord
+SELECT * FROM Patient
 
 
 -- Use GROUP BY, HAVING, and aggregate functions.
